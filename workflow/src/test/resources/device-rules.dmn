@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn11.xsd" id="definitions" name="definitions"
+             namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="stateDecision" name="Device State Decision">
+        <decisionTable id="decisionTable">
+            <input id="input1" label="Current state">
+                <inputExpression id="inputExpression1" typeRef="string">
+                    <text>currentState</text>
+                </inputExpression>
+            </input>
+            <input id="InputClause_1oo5lep" label="One week after last activity">
+                <inputExpression id="LiteralExpression_18vqwlb" typeRef="date" expressionLanguage="javascript">
+                    <text><![CDATA[var oneWeekAfterLastActivity = new Date(lastActive);
+oneWeekAfterLastActivity.setDate(oneWeekAfterLastActivity.getDate() + 7);
+oneWeekAfterLastActivity.toISOString();]]></text>
+                </inputExpression>
+            </input>
+            <output id="output1" label="New state" name="newState" typeRef="string"/>
+            <rule id="table-16024834-1">
+                <description>
+                    <![CDATA[When a user uses a device for the first time, it's a new device which is considered ACTIVE.]]></description>
+                <inputEntry id="UnaryTests_0cmb8p2">
+                    <text><![CDATA["NEW"]]></text>
+                </inputEntry>
+                <inputEntry id="UnaryTests_12kwd4s">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="LiteralExpression_0stzfw0">
+                    <text><![CDATA["ACTIVE"]]></text>
+                </outputEntry>
+            </rule>
+            <rule id="row-931986345-1">
+                <description>If a device has not been used for more than a week, it becomes INACTIVE.</description>
+                <inputEntry id="UnaryTests_11dkoc2">
+                    <text><![CDATA["ACTIVE"]]></text>
+                </inputEntry>
+                <inputEntry id="UnaryTests_19aqsqy">
+                    <text><![CDATA[< date and time(currentDate)]]></text>
+                </inputEntry>
+                <outputEntry id="LiteralExpression_0hvq6mp">
+                    <text><![CDATA["INACTIVE"]]></text>
+                </outputEntry>
+            </rule>
+            <rule id="row-931986345-2">
+                <description><![CDATA[If it's not used for another week, then it becomes LOST.]]></description>
+                <inputEntry id="UnaryTests_1kyd0l3">
+                    <text><![CDATA["INACTIVE"]]></text>
+                </inputEntry>
+                <inputEntry id="UnaryTests_0kbnpkt">
+                    <text><![CDATA[< date and time(currentDate)]]></text>
+                </inputEntry>
+                <outputEntry id="LiteralExpression_1hxh140">
+                    <text><![CDATA["LOST"]]></text>
+                </outputEntry>
+            </rule>
+            <rule id="row-931986345-4">
+                <description>If an INACTIVE or LOST device is used again, it becomes ACTIVE again.</description>
+                <inputEntry id="UnaryTests_1fkwjo3">
+                    <text><![CDATA["ACTIVE", "INACTIVE", "LOST"]]></text>
+                </inputEntry>
+                <inputEntry id="UnaryTests_0p9aue3">
+                    <text><![CDATA[>= date and time(currentDate)]]></text>
+                </inputEntry>
+                <outputEntry id="LiteralExpression_140vehj">
+                    <text><![CDATA["ACTIVE"]]></text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
